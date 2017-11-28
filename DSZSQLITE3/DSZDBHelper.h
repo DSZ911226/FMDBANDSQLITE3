@@ -12,7 +12,7 @@
 @interface DSZDBHelper : NSObject
 @property (nonatomic, strong) FMDatabaseQueue *dbQueue;     // 数据库队列类
 
-+ (DSZDBHelper *)shareInstance;
++ (DSZDBHelper *)shareInstance;// 使用单例的目的是为了解决 数据库队列同时访问同一个资源会产生锁
 
 /**
  *  初始化数据库，这个方法初始化时需要执行一次，主要是数据库名，数据库表的创建 初始化赋值
@@ -26,7 +26,8 @@
                    tables:(NSArray *)tables;
 
 
-- (BOOL) executeUpdate:(NSString *)sql;        // 执行sql语句
+- (BOOL) executeUpdate:(NSString *)sql;        // 执行sql语句 单条语句执行
+- (BOOL) executeTransactionUpdate:(NSArray *)sqls; //执行多条sql语句合并语句  事务处理
 
 /*
  * 删除数据

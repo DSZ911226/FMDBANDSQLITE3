@@ -189,7 +189,25 @@ static NSString *kDBName;       // 数据库名称
     }];
     return isSuccess;
 }
-
+- (BOOL) executeTransactionUpdate:(NSArray *)sqls {
+    __block BOOL isSuccess = NO;
+    
+    if (sqls.count == 0) {
+        return isSuccess;
+    }
+    [self.dbQueue inDatabase:^(FMDatabase *db2) {
+        [db2 beginTransaction];
+        for (NSString *sql in sqls) {
+            [db2 executeUpdate:sql];
+        }
+        if ([db2 hadError])
+        {
+            NSLog(@"数据库执行 错误 %d: %@", [db2 lastErrorCode], [db2 lastErrorMessage]);
+        }
+        isSuccess = [db2 commit];
+    }];
+    return isSuccess;
+}
 - (BOOL)insert4Table:(NSString *)name
              columns:(NSString *)columns
               values:(NSString *)values {
